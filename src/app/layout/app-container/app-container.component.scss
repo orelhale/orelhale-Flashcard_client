@@ -1,0 +1,27 @@
+
+.container{
+   display: grid;
+   grid-template-columns: 10% 90%;
+   grid-template-rows: 50px auto;
+   min-height: 100vh;
+   width: 100vw;
+}
+
+.header{
+   grid-column: 1/3;
+   background: var(--green);
+   height: 100%;
+   position: sticky;
+   top: 0;
+   height: 100%;
+
+}
+.sidebar{
+   grid-column: 1/2;
+   background: var(--green-03);
+   height: 100%;
+
+}
+.main{
+   grid-column: 2/3;
+}

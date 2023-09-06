@@ -1,0 +1,70 @@
+<ng-container *ngIf="!test">
+
+   <div class="container">
+      <app-header class="header"></app-header>
+      <app-sidebar class="sidebar"></app-sidebar>
+      <app-main class="main"></app-main>
+   </div>
+</ng-container>
+
+
+<ng-container *ngIf="test">
+   <h1>test</h1>
+
+   <div [ngTemplateOutlet]="from3"></div>
+</ng-container>
+
+
+<ng-template #from3>
+   <form>
+      <input #input2 (keyup.enter)="addInput(input2)">
+      <ul>
+         <li *ngFor="let item of list.controls">{{item.value}}</li>
+      </ul>
+   </form>
+</ng-template>
+
+
+<ng-template #from2>
+   <form [formGroup]="form2">
+      <div><input formControlName="name" type="text" (change)="log(name2)"></div>
+      <div *ngIf="accessFrom2.name.touched && accessFrom2.name.errors">
+         <div *ngIf="accessFrom2.name.errors['myRequired']">Name is required</div>
+      </div>
+      <br>
+      <br>
+      <div><input formControlName="age" type="text"></div>
+      <div *ngIf="accessFrom2.age.touched && accessFrom2.age.errors">
+         <div *ngIf="accessFrom2.age.errors['myRequired']">Age is required</div>
+         <div *ngIf="accessFrom2.age.errors['myPattern']">Age not like pattern</div>
+      </div>
+   </form>
+</ng-template>
+
+
+
+<ng-template #from1>
+   <form ngForm #form="ngForm">
+      <div>
+         <input required #courssName="ngModel" (change)="log(courssName.errors)" minlength="5" ngModel type="text"
+            placeholder="courssName" name="courssName">
+      </div>
+      <div *ngIf="courssName.errors && courssName.touched">
+         <div *ngIf="courssName.errors['required']">The name is required</div>
+         <div *ngIf="courssName.errors['minlength']">The min name have to be 5 cahr</div>
+      </div>
+      <br>
+      <br>
+      <select required ngModel name="select">
+         <option value=""></option>
+         <option *ngFor="let item of obj" [ngValue]="item.key">{{item.value}}</option>
+      </select>
+      <br>
+      <br>
+      <div>
+         <input ngModel name="checkbox" type="checkbox">For 30 days
+      </div>
+      <p>{{form.value | json}}</p>
+      <button [disabled]="!form.valid">Sumbit</button>
+   </form>
+</ng-template>

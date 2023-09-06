@@ -1,0 +1,39 @@
+<div>
+
+   <div>
+      <h1 *ngIf="packetList.length" class="page-title">Packet list</h1>
+      <h1 *ngIf="!packetList.length" class="page-title">Packet not found</h1>
+      <button (click)="add()">+ Packet</button>
+   </div>
+
+   <div *ngIf="tableTemplate">
+      <br />
+      <app-generic-table [tableData]="tableData" [tableTemplate]="tableTemplate" (clickGenericTable)="eventTavle($event)">
+         <!-- [tpl]="lastColumn" -->
+         <!-- <ng-template #lastColumn>
+            <zippy title="Option" >
+               <div class="button g-hover-g under-line-g" (click)="onClick({type:'delete',data:row})">delete</div>
+               <div class="button g-hover-g under-line-g" (click)="onClick({type:'edit',data:row})">edit</div>
+            </zippy>
+         </ng-template> -->
+      </app-generic-table>
+   </div>
+</div>
+
+
+<!-- 
+<ng-template #packet>
+   <h1 *ngIf="packetList.length" class="page-title">Packet list</h1>
+   <h1 *ngIf="!packetList.length" class="page-title">Packet not found</h1>
+   <button (click)="add()">+ Packet</button>
+</ng-template>
+
+
+<ng-template #card>
+   <button (click)="navigator('')">{{"< Packets"}}</button>
+         <h1 class="page-title" *ngIf="!selectPacket">Packet id not found</h1>
+         <div *ngIf="selectPacket">
+            <h1 class="page-title">Card list: {{selectPacket.name}}</h1>
+            <button class="addCard" (click)="add()">+ Card</button>
+         </div>
+</ng-template> -->

@@ -1,0 +1,21 @@
+<table *ngIf="tableData" class="global-table-style1 table">
+
+   <tr>
+      <th *ngFor="let item of tableTemplate">{{item.title != "$child" ?item.title :""}}</th>
+   </tr>
+
+   <tr *ngFor="let row of tableData" (click)="onClick({type:'navigator',data:row})">
+      <!-- <td *ngFor="let item of tableTemplate">{{row[item.key] != undefined?row[item.key] : item.key}}</td> -->
+      <td *ngFor="let item of tableTemplate">{{item.title != "$child" ?(item.title != "#"? row[item.key] : item.key):""}}
+         <!-- <ng-container *ngIf="item.title == '$child'" [ngTemplateOutlet]="tpl"></ng-container> -->
+
+         <zippy *ngIf="item.title == '$child'" title="Option" (click)="stop($event)">
+            <div class="button g-hover-g under-line-g" (click)="onClick({type:'delete',data:row})">delete</div>
+            <div class="button g-hover-g under-line-g" (click)="onClick({type:'edit',data:row})">edit</div>
+         </zippy>
+      </td>
+
+   </tr>
+</table>
+
+

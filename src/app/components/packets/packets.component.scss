@@ -1,0 +1,21 @@
+
+table{
+   border-collapse: collapse;
+}
+
+th , td{
+   border: 1px black solid;
+   padding: 5px;  
+}
+
+td{
+   padding: 8px 30px;
+}
+
+.page-title{
+   color: var(--green1);
+}
+
+.panelClass{
+   background-color: aqua;
+}

@@ -1,0 +1,14 @@
+<div class="popup-wrap" (click)="clickBackGroundPopup($event)">
+   <div class="popup-bady" (click)="stopPropagation($event)">
+
+
+      <form class="form"  [formGroup]="formConfig">
+         <input placeholder="Packet name" formControlName="name" />
+         <div>
+            <button (click)="onClick()" type="submit">{{packet ? "Edit":"Add"}}</button>
+         </div>
+      </form>
+
+      
+   </div>
+</div>

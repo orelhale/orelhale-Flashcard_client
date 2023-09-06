@@ -1,0 +1,15 @@
+<div class="popup-wrap" (click)="clickBackGroundPopup($event)">
+   <div class="popup-bady" (click)="stopPropagation($event)">
+
+      <form class="form" [formGroup]="fildInput" (ngSubmit)="onSubmit($event)">
+         <div *ngFor="let fild of filds">
+            <input type="text" [placeholder]="fild" [formControlName]="fild" />
+         </div>
+
+         <div>
+            <button type="submit">{{card?"Edit":"Add"}}</button>
+         </div>
+      </form>
+      
+   </div>
+</div>

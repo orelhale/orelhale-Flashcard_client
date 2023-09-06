@@ -1,0 +1,17 @@
+<div>
+   <div>
+      <button (click)="navigator('')">{{"\< Packets"}}</button>
+   </div>
+
+   <h1 class="page-title" *ngIf="!selectPacket">Packet id not found</h1>
+
+   <div *ngIf="selectPacket">
+      <h1 class="page-title">Card list: {{selectPacket.name}}</h1>
+      <button class="addCard" (click)="add()">+ Card</button>
+   </div>
+   
+   <br />
+
+   <app-generic-table [tableData]="tableData" [tableTemplate]="tableTemplate" (clickGenericTable)="eventTable($event)">
+   </app-generic-table>
+</div>
