@@ -12,15 +12,14 @@ import { CardConfigComponent } from '../card-config/card-config.component';
   styleUrls: ['./cards.component.scss']
 })
 export class CardsComponent {
-  selectPacket: Packet;
-
+  selectPacket: any;
+  carsd: Card[] = []
   tableTemplate = [{ title: "Question", key: "question" }, { title: "Answer", key: "answer" }, { title: "Create at", key: "createAt" }, { title: "$child", key: "" }]
   tableData: any;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private packetService: PacketService,
     private cardService: CardService,
     private matDialog: MatDialog,
   ) { }
@@ -28,17 +27,24 @@ export class CardsComponent {
   ngOnInit() {
     let id = this.activatedRoute.snapshot.paramMap.get('id')
     // let packet = this.packetService.getPacketById2(id!)
-    let packet = this.packetService.getPacketById2(id!)
+    // let packet = this.packetService.getPacketById2(id!)
 
-    if (!id || !packet) {
+    if (!id) {
       return this.navigator()
     }
-    this.selectPacket = packet
 
-    this.cardService.getCardsByPacketId(id!).subscribe(
-      (cards) => {
-        this.selectPacket.cardList = cards
-        this.tableData = this.selectPacket.cardList
+    this.cardService.getPacket(id!).subscribe(
+      (packet: any) => {
+        if (!packet) {
+          return this.navigator()
+        }
+        this.selectPacket = packet
+        // console.log("this.selectPacket == ",this.selectPacket);
+        
+        this.tableData = this.selectPacket.cards
+        // console.log("this.selectPacket == ",this.tableData);
+        // this.selectPacket.[cardList] = cardsthrowError
+        // this.tableData = this.selectPacket.cardList
       },
       (err) => console.log("err == ", err)
     )
@@ -71,15 +77,15 @@ export class CardsComponent {
 
 
   deleteCard(card: Card, packet: Packet) {
-    let indexPacket = this.cardService.cardsAsObj[packet.id].indexOf(card)
-    this.cardService.cardsAsObj[packet.id].splice(indexPacket, 1)
+    let indexPacket = this.selectPacket.cards.indexOf(card)
+    this.selectPacket.cards.splice(indexPacket, 1)
 
     this.cardService.deleteCard(card.id + "").subscribe(
       () => {
-        let index = this.cardService.cards.indexOf(card)
-        this.cardService.cards.splice(index, 1)
+        // let index = this.selectPacket.cards.indexOf(card)
+        // this.selectPacket.cards.splice(index, 1)
       },
-      () => this.cardService.cardsAsObj[packet.id].splice(indexPacket, 0, card)
+      () => this.selectPacket.cards.splice(indexPacket, 0, card)
     )
   }
 

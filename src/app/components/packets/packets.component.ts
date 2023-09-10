@@ -15,6 +15,7 @@ export class PacketsComponent {
   typePage: string = "packet";
   tableData: Array<any> | any;
   tableTemplate: Array<object> = [{ title: "Name", key: "name" }, { title: "Card num", key: "childLength" }, { title: "", key: ":" }, { title: "$child", key: "" }]
+  dialogConfig = new MatDialogConfig();
 
   constructor(
     private packetService: PacketService,
@@ -22,20 +23,17 @@ export class PacketsComponent {
     private matDialog: MatDialog,
   ) { }
 
-  dialogConfig = new MatDialogConfig();
+
 
   ngOnInit() {
-
-    this.packetService.subjectPacketList.subscribe((data: any) => {
+    this.packetService.getPackets().subscribe((data: any) => {
       this.packetList = data
       this.tableData = this.packetList
-    })
 
-    // this.packetService.getPackets().subscribe((data: any) => {
-    //   this.packetList = data
-    //   this.tableData = this.packetList
-    // })
+      console.log("packetList == ",this.packetList);
+    })
   }
+
 
   navigator(param: any) {
     let path = param ? ["/packet", param] : ["/packet"]
@@ -44,25 +42,19 @@ export class PacketsComponent {
 
 
   async eventTavle(obj: { type: string, data: any }) {
-
-    console.log("obj == ", obj);
-    if (obj.type == "navigator") {
+    if (obj.type == "navigator") 
       return this.navigator(obj.data.id)
-    }
-
-    if (obj.type == "edit") {
+    
+    if (obj.type == "edit") 
       return this.add(obj.data)
-    }
 
-    if (obj.type == "delete") {
+    if (obj.type == "delete") 
       return this.packetService.deletePacket(obj.data)
-    }
   }
 
 
   add(data?: any) {
     this.matDialog.open(PacketConfigComponent, { data: { packet: data } })
   }
-
 
 }

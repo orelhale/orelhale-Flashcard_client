@@ -1,7 +1,7 @@
-<div class="popup-wrap" (click)="clickBackGroundPopup($event)">
+<div class="popup-wrap" (click)="clickBackGroundPopup()">
    <div class="popup-bady" (click)="stopPropagation($event)">
 
-      <form class="form" [formGroup]="fildInput" (ngSubmit)="onSubmit($event)">
+      <form class="form" [formGroup]="fildInput" (ngSubmit)="onSubmit()">
          <div *ngFor="let fild of filds">
             <input type="text" [placeholder]="fild" [formControlName]="fild" />
          </div>

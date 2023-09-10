@@ -1,37 +1,36 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { catchError, map, of } from 'rxjs';
+import { DataService } from './data.service';
+import { PacketAndCardService } from './packet-and-card.service';
+
 import fakePacketList from "./fakePacketList.json"
 import fakeCardList from "./fakeCardList.json"
-import { HttpClient } from '@angular/common/http';
-import { Observable, Subject, catchError, map, of, throwError, BehaviorSubject } from 'rxjs';
-import { DataService } from './data.service';
-
 
 @Injectable({
 	providedIn: 'root'
 })
 export class PacketService extends DataService {
 
-	private fackPacketList: Packet[] = [];
-	private fackCardList: Card[] = [];
+	private fackPacketList: Packet[] = fakePacketList;
+	private fackCardList: Card[] = fakeCardList;
 
-
-	public packetList: Packet[] = [];
+	public packetList: any = [];
 	private packetListAsObj: any;
-
-	public subjectPacketList: any = new BehaviorSubject([])
-	public subjectPacketListAsObj: any = new BehaviorSubject([])
 
 	serverUrl: string = "http://localhost:3000"
 
-	constructor(httpClient: HttpClient) {
+	constructor(
+		httpClient: HttpClient,
+		private packetAndCardService: PacketAndCardService,
+	) {
 		super("packets", httpClient)
 		this.fackPacketList = fakePacketList || []
 		this.fackCardList = fakeCardList || []
-		this.intialzeService().subscribe(data=>console.log("Packets == ",data))
 	}
 
 
-	craetePacket(packet: Packet) {
+	craetePacket(packet: any) {
 		this.packetList.splice(0, 0, packet)
 
 		return this.create(packet).pipe(
@@ -39,7 +38,9 @@ export class PacketService extends DataService {
 				packet.id = data.id
 				packet.childLength = 0
 				packet.createAt = data.createAt
+				packet.cards = []
 				this.packetListAsObj[packet.id] = packet
+				this.packetAndCardService.objPacketAndCard.next(this.packetListAsObj)
 				return data
 			}),
 			catchError(err => {
@@ -50,13 +51,15 @@ export class PacketService extends DataService {
 	}
 
 	getPackets() {
-		if (this.packetList.length) {
-			return new Observable((e) => e.next(this.packetList))
-		} else {
-			return this.intialzeService().pipe(map(() => this.packetList))
-		}
+		this.packetAndCardService.objPacketAndCard.subscribe((obj: any) => this.packetListAsObj = obj)
+		return this.packetAndCardService.arrPacketAndCard.pipe(
+			map(list => {
+				console.log("packetList  == ", list);
+				this.packetList = list
+				return list
+			})
+		)
 	}
-
 
 	getPacketById(id: string) {
 		if (this.packetListAsObj) {
@@ -116,12 +119,9 @@ export class PacketService extends DataService {
 					createAt: packet.createAt,
 					id: packet.id,
 					childLength: packet.cards?.length || 0
-					// cardList: packet?.cards || [],
 				}
 				return { ...this.packetListAsObj[packet.id] }
 			}) || [];
-			this.subjectPacketList.next(this.packetList)
-			this.subjectPacketListAsObj.next(this.packetListAsObj)
 			console.log("this.packetList intialzeService == ", this.packetList);
 			return data
 		}))
@@ -134,7 +134,6 @@ export interface Packet {
 	name: String,
 	createAt: number,
 	id: number,
-	cardList?: Array<Card>,
 	childLength?: number,
 }
 

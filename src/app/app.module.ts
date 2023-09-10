@@ -38,7 +38,6 @@ import { CardsComponent } from './components/cards/cards.component';
     HttpClientModule,
     FormsModule,
     MatDialogModule,
-
   ],
   providers: [],
   bootstrap: [AppComponent]

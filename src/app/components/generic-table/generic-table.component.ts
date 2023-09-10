@@ -13,8 +13,7 @@ export class GenericTableComponent {
 
   ngOnInit(){
     // console.log('tableTemplate== ',this.tableTemplate);
-    // console.log('tableTemplate== ',this.tableData);
-
+    // console.log('tableData== ',this.tableData);
   }
   objectKeys(obj?: Object) {
     

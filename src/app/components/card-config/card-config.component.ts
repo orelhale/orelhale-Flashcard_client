@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
-import { Card, Packet, PacketService } from 'src/app/services/packet.service';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, Inject } from '@angular/core';
+import { Packet } from 'src/app/services/packet.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { CardService } from 'src/app/services/card.service';
 
@@ -11,23 +11,23 @@ import { CardService } from 'src/app/services/card.service';
 })
 export class CardConfigComponent {
 
-  packet: Packet;
+  packet: any;
   fildInput: FormGroup<any>;
   filds = ["question", "answer"]
   card: any;
 
   constructor(
     private formBuilder: FormBuilder,
-    private packetService: PacketService,
     private cardService: CardService,
     @Inject(MAT_DIALOG_DATA) private dialogData: { card: any, packet: Packet },
     private matDialog: MatDialog
   ) { }
 
+  
   ngOnInit() {
-    console.log("dialogData == ", this.dialogData);
     this.card = this.dialogData.card
     this.packet = this.dialogData.packet
+    console.log("this.packet == ", this.packet);
 
     if (!this.packet) {
       alert("packet is missung")
@@ -35,18 +35,14 @@ export class CardConfigComponent {
     }
 
     this.fildInput = this.formBuilder.group({
-      question: [(this.card && this.card['question']) || "", Validators.required],
-      answer: [(this.card && this.card['answer']) || ""],
-      // answer: [obj['answer'] || "", Validators.required]
+      question: [(this.card && this.card['question']) || "Question ", Validators.required],
+      answer: [(this.card && this.card['answer']) || "Answer "],
     })
   }
 
 
-  onSubmit(event: Event) {
-    // event.preventDefault()
+  onSubmit() {
     if (!this.fildInput.valid) {
-      console.log("this.fildInput.valid == ", this.fildInput.valid);
-      console.log("this.fildInput.valid == ", this.fildInput);
       return
     }
     let obj = { ...this.fildInput.value }
@@ -58,56 +54,41 @@ export class CardConfigComponent {
     }
   }
 
+
   clossPopup() {
     this.matDialog.closeAll()
   }
 
-  clickBackGroundPopup(e: Event) {
+
+  clickBackGroundPopup() {
     this.matDialog.closeAll()
   }
+
 
   stopPropagation(e: Event) {
     e.stopPropagation()
   }
 
+
   craeteCard(obj: any) {
     obj.packetId = this.packet.id
-    console.log(this.packet);
-    
-    if (this.packet.cardList) {
-      this.packet.cardList?.splice(0, 0, obj)
-    } else {
-      this.packet.cardList = [obj]
-    }
+    let cardArr = this.packet.cards
 
-    this.packet.childLength = this.packet.cardList.length
+    cardArr.splice(0, 0, obj)
 
     this.cardService.createCard(obj).subscribe(
       (newData: any) => {
         obj.id = newData.id
         obj.createAt = newData.createAt
+        this.packet.childLength++;
         this.clossPopup()
       },
-      () => {
-        this.packet.cardList!.splice(0, 1)
-        this.packet.childLength = this.packet.cardList?.length
-      }
-    )
+      () => cardArr.splice(0, 1))
   }
+
 
   updateCard(obj: any) {
-    let tempCard = { ...this.card }
-    this.card.question = obj.question
-    this.card.answer = obj.answer
-
-    this.cardService.updateCard(obj, this.card.id).subscribe(
-      () => this.clossPopup(),
-      (err) => {
-        this.card.question = tempCard.question
-        this.card.answer = tempCard.answer
-      }
-    )
+    this.cardService.updateCard(obj, this.card).subscribe(() => this.clossPopup())
   }
-
 
 }

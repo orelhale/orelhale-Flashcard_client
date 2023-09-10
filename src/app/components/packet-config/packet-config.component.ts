@@ -24,10 +24,12 @@ export class PacketConfigComponent {
 
 
   ngOnInit() {
+    console.log("packet-config data == ", this.data);
+
     this.packet = this.data.packet
 
     this.formConfig = this.formBuilder.group({
-      name: [this.packet?.name || '', Validators.required]
+      name: [this.packet?.name || 'Packet ', Validators.required]
     })
   }
 
@@ -72,6 +74,11 @@ export class PacketConfigComponent {
 
 
   createPacket(objPacket: any) {
-    this.packetService.craetePacket(objPacket).subscribe(() => this.clossPopup())
+    console.log("objPacket == ", objPacket);
+
+    this.packetService.craetePacket(objPacket).subscribe(() => {
+
+      this.clossPopup()
+    })
   }
 }

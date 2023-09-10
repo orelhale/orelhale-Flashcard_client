@@ -2,36 +2,25 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { DataService } from './data.service';
 import { Card } from './packet.service';
-import { Observable, Subscriber, catchError, map, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, Subscriber, catchError, throwError } from 'rxjs';
+import { PacketAndCardService } from './packet-and-card.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CardService extends DataService {
-  cards: Card[] = [];
-  cardsAsObj: any;
-  // observableCard: Observable<any>=new Observable;
+  
+  packetOfCard = new BehaviorSubject([]);
+  packet: any;
   observableCard: Observable<any>;
   subscriber = new Subscriber();
 
-  constructor(httpClient: HttpClient) {
+  constructor(
+    httpClient: HttpClient,
+    private packetAndCardService: PacketAndCardService,
+  ) {
     super("cards", httpClient)
   }
-
-
-  initializingCard(cards: Card[]) {
-    let obj: any = {}
-    if (cards.length) {
-      cards.forEach((card) => {
-        if (!obj[card.packetId]) {
-          obj[card.packetId] = []
-        }
-        obj[card.packetId].push(card)
-      })
-    }
-    return obj
-  }
-
 
   createCard(obj: Card) {
     return this.create(obj)
@@ -41,29 +30,29 @@ export class CardService extends DataService {
     return this.delete(id)
   }
 
-  updateCard(obj: any, id: string) {
-    console.log("obj == ",obj);
-    console.log("id == ",id);
-    
-    return this.updata(obj, id)
+  updateCard(obj: any, card: any) {
+    let tempCard = { ...card }
+    card.question = obj.question
+    card.answer = obj.answer
+
+    return this.updata(obj, card.id).pipe(
+      catchError((err) => {
+        card.question = tempCard.question
+        card.answer = tempCard.answer
+        return throwError(err)
+      })
+    )
   }
 
-  getCardsByPacketId(id: string) {
-    if (this.cardsAsObj) {
-      return new Observable((obs) => obs.next(this.cardsAsObj[id]))
-    } else {
-      return this.getAll().pipe(
-        map(data => {
-          this.cards = data
-          this.cardsAsObj = this.initializingCard(this.cards)
-          console.log("this.cards == ", this.cards);
-
-          return this.cardsAsObj[id] || []
-        }),
-        catchError((err) => throwError(err))
-      )
-    }
+  init(id: string) {
+    this.packetAndCardService.objPacketAndCard.subscribe((list: any) => {
+      this.packet = list[id]
+      this.packetOfCard.next(list[id])
+    })
   }
 
+  getPacket(id: string) {
+    this.init(id)
+    return this.packetOfCard
+  }
 }
-        // this.cardsAsObj = this.initializingCard(data)
